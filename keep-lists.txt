@@ -3,5 +3,11 @@
 category-ads-all
 gfw
 china-list
+category-pt
+synology
+youtube
+category-ai-!cn
+category-ai-chat-!cn
+netflix
 cn
 private

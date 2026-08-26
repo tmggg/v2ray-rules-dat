@@ -174,9 +174,9 @@ jobs:
 
       - name: Copy desired geosite categories and their include dependencies into build directory
         run: |
-          KEEP_LISTS="category-ads-all gfw china-list category-pt synology youtube category-ai-!cn category-ai-chat-!cn netflix"
+          mapfile -t KEEP_LISTS < <(sed -e 's/#.*//' -e 's/[[:space:]]//g' ./repo-main/keep-lists.txt | grep -v '^$')
           mkdir -p ./geosite-data
-          queue=($KEEP_LISTS)
+          queue=("${KEEP_LISTS[@]}")
           i=0
           while [ $i -lt ${#queue[@]} ]; do
             list=${queue[$i]}
@@ -207,7 +207,9 @@ jobs:
         run: |
           cd custom || exit 1
           cp ../repo-main/workflows/filter-dat.go ./filter-dat.go
-          go run ./filter-dat.go ./publish/geosite.dat ./publish/geosite.dat 'category-ads-all,gfw,china-list,category-pt,synology,youtube,category-ai-!cn,category-ai-chat-!cn,netflix'
+          FILTER_LISTS=$(sed -e 's/#.*//' -e 's/[[:space:]]//g' ../repo-main/keep-lists.txt | grep -v '^$' | paste -sd, -)
+          echo "Filtering categories: ${FILTER_LISTS}"
+          go run ./filter-dat.go ./publish/geosite.dat ./publish/geosite.dat "${FILTER_LISTS}"
           rm -f ./filter-dat.go
 
       - name: Move and zip files and generate sha256 hash

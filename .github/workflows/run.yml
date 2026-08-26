@@ -179,6 +179,7 @@ jobs:
           ls -la ./geosite-data
 
       - name: Build geosite.dat file
+        timeout-minutes: 10
         run: |
           cd custom || exit 1
           go build -o geosite-builder .

@@ -1,13 +1,6 @@
 # 需要保留的 geosite 分类，每行一个
 # 以 # 开头的注释会被自动忽略
 category-ads-all
-gfw
 china-list
-category-pt
-synology
-youtube
-category-ai-!cn
-category-ai-chat-!cn
-netflix
 cn
 private

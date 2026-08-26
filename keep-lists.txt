@@ -10,3 +10,4 @@ category-ai-!cn
 category-ai-chat-!cn
 netflix
 cn
+private

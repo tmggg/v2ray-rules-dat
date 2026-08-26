@@ -37,6 +37,12 @@ jobs:
         with:
           ref: hidden
 
+      - name: Checkout this repository (for helper scripts)
+        uses: actions/checkout@v7
+        with:
+          ref: ${{ github.ref }}
+          path: repo-main
+
       - name: Checkout Loyalsoldier/domain-list-custom
         uses: actions/checkout@v7
         with:
@@ -200,7 +206,7 @@ jobs:
       - name: Filter geosite.dat to keep only desired categories
         run: |
           cd custom || exit 1
-          cp ../workflows/filter-dat.go ./filter-dat.go
+          cp ../repo-main/workflows/filter-dat.go ./filter-dat.go
           go run ./filter-dat.go ./publish/geosite.dat ./publish/geosite.dat 'category-ads-all,gfw,china-list,category-pt,synology,youtube,category-ai-!cn,category-ai-chat-!cn,netflix'
           rm -f ./filter-dat.go
 

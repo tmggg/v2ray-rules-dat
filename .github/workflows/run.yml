@@ -166,16 +166,28 @@ jobs:
           curl -sSL $WIN_EXTRA | grep "0.0.0.0" | awk '{print $2}' > ./community/data/win-extra
           curl -sSL $WIN_EXTRA | grep "0.0.0.0" | awk '{print $2}' > win-extra.txt
 
-      - name: Copy only desired geosite categories into build directory
+      - name: Copy desired geosite categories and their include dependencies into build directory
         run: |
+          KEEP_LISTS="category-ads-all gfw china-list category-pt synology youtube category-ai-!cn category-ai-chat-!cn netflix"
           mkdir -p ./geosite-data
-          for list in category-ads-all gfw china-list category-pt synology youtube 'category-ai-!cn' 'category-ai-chat-!cn' netflix; do
-            if [ -f "./community/data/${list}" ]; then
-              cp "./community/data/${list}" ./geosite-data/
-            else
-              echo "::warning::list ${list} not found in community/data"
+          queue=($KEEP_LISTS)
+          i=0
+          while [ $i -lt ${#queue[@]} ]; do
+            list=${queue[$i]}
+            i=$((i + 1))
+            [ -f "./geosite-data/${list}" ] && continue
+            if [ ! -f "./community/data/${list}" ]; then
+              [ -f "./${list}" ] && cp "./${list}" ./geosite-data/ && continue
+              echo "::warning::list ${list} not found, skipped"
+              continue
             fi
+            cp "./community/data/${list}" ./geosite-data/
+            while IFS= read -r dep; do
+              dep=$(printf '%s' "$dep" | sed -e 's/^include://' -e 's/[[:space:]][@#].*//' -e 's/[[:space:]]*$//')
+              [ -n "$dep" ] && [ ! -f "./geosite-data/${dep}" ] && queue+=("$dep")
+            done < <(grep -E '^include:' "./community/data/${list}" || true)
           done
+          echo "Total lists in build directory: $(ls ./geosite-data | wc -l)"
           ls -la ./geosite-data
 
       - name: Build geosite.dat file
@@ -183,7 +195,14 @@ jobs:
         run: |
           cd custom || exit 1
           go build -o geosite-builder .
-          ./geosite-builder --datapath=../geosite-data
+          ./geosite-builder --datapath=../geosite-data --togfwlist=gfw
+
+      - name: Filter geosite.dat to keep only desired categories
+        run: |
+          cd custom || exit 1
+          cp ../workflows/filter-dat.go ./filter-dat.go
+          go run ./filter-dat.go ./publish/geosite.dat ./publish/geosite.dat 'category-ads-all,gfw,china-list,category-pt,synology,youtube,category-ai-!cn,category-ai-chat-!cn,netflix'
+          rm -f ./filter-dat.go
 
       - name: Move and zip files and generate sha256 hash
         run: |

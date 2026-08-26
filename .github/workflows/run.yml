@@ -166,10 +166,22 @@ jobs:
           curl -sSL $WIN_EXTRA | grep "0.0.0.0" | awk '{print $2}' > ./community/data/win-extra
           curl -sSL $WIN_EXTRA | grep "0.0.0.0" | awk '{print $2}' > win-extra.txt
 
+      - name: Copy only desired geosite categories into build directory
+        run: |
+          mkdir -p ./geosite-data
+          for list in category-ads-all gfw china-list category-pt synology youtube 'category-ai-!cn' 'category-ai-chat-!cn' netflix; do
+            if [ -f "./community/data/${list}" ]; then
+              cp "./community/data/${list}" ./geosite-data/
+            else
+              echo "::warning::list ${list} not found in community/data"
+            fi
+          done
+          ls -la ./geosite-data
+
       - name: Build geosite.dat file
         run: |
           cd custom || exit 1
-          go run ./ --datapath=../community/data
+          go run ./ --datapath=../geosite-data
 
       - name: Move and zip files and generate sha256 hash
         run: |

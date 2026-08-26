@@ -1,4 +1,5 @@
-// Command filterdat keeps only the specified lists in a geosite.dat file.
+// Command filterdat keeps only the specified lists in a geosite.dat or geoip.dat file
+// (both use the same GeoSiteList protobuf format).
 //
 // Usage: go run ./filter-dat.go <input.dat> <output.dat> <keep1,keep2,...>
 // List names are case-insensitive. Entries not in the keep list are dropped.

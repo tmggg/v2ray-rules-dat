@@ -212,6 +212,16 @@ jobs:
           go run ./filter-dat.go ./publish/geosite.dat ./publish/geosite.dat "${FILTER_LISTS}"
           rm -f ./filter-dat.go
 
+      - name: Filter geoip.dat to keep only desired countries
+        run: |
+          cd custom || exit 1
+          cp ../repo-main/workflows/filter-dat.go ./filter-dat.go
+          FILTER_LISTS=$(sed -e 's/#.*//' -e 's/[[:space:]]//g' ../repo-main/keep-geoip.txt | grep -v '^$' | paste -sd, -)
+          echo "Filtering geoip countries: ${FILTER_LISTS}"
+          go run ./filter-dat.go ../geoip.dat ../geoip.dat "${FILTER_LISTS}"
+          rm -f ./filter-dat.go
+          cd .. && sha256sum geoip.dat > geoip.dat.sha256sum
+
       - name: Move and zip files and generate sha256 hash
         run: |
           install -Dp ./geoip.dat ./publish/geoip.dat

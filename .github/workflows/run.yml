@@ -181,7 +181,8 @@ jobs:
       - name: Build geosite.dat file
         run: |
           cd custom || exit 1
-          go run ./ --datapath=../geosite-data
+          go build -o geosite-builder .
+          ./geosite-builder --datapath=../geosite-data
 
       - name: Move and zip files and generate sha256 hash
         run: |

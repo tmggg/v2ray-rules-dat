@@ -3,7 +3,6 @@
 cn
 private
 category-ads-all
-china-list
 category-pt
 synology
 youtube

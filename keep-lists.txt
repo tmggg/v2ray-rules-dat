@@ -2,4 +2,19 @@
 # 以 # 开头的注释会被自动忽略
 cn
 private
+gfw
 category-ads-all
+category-ai-!cn
+category-ai-chat-!cn
+google
+apple
+microsoft
+github
+youtube
+netflix
+telegram
+twitter
+tiktok
+reddit
+synology
+category-pt

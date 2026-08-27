@@ -201,7 +201,11 @@ jobs:
         run: |
           cd custom || exit 1
           go build -o geosite-builder .
-          ./geosite-builder --datapath=../geosite-data --togfwlist=gfw
+          # Use the first entry from keep-lists.txt as the togfwlist source,
+          # since it is guaranteed to exist in the build directory.
+          TOGFWLIST=$(sed -e 's/#.*//' -e 's/[[:space:]]//g' ../repo-main/keep-lists.txt | grep -v '^$' | head -1)
+          echo "Using '${TOGFWLIST}' for --togfwlist"
+          ./geosite-builder --datapath=../geosite-data --togfwlist="${TOGFWLIST}"
 
       - name: Filter geosite.dat to keep only desired categories
         run: |

@@ -2,6 +2,7 @@
 # 以 # 开头的注释会被自动忽略
 cn
 private
+china-list
 gfw
 category-ads-all
 category-ai-!cn
